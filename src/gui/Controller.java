@@ -8,10 +8,14 @@ import elementclasses.LevelGenerator;
 import elementclasses.Passage;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
+import saves.Save;
+import saves.Load;
 
 public class Controller {
     private MyGui gui;
     private LevelGenerator levGen;
+    private Save saveData;
+    private Load loadData;
 
     public Controller(MyGui tempGui){
         gui = tempGui;
@@ -39,8 +43,13 @@ public class Controller {
 
     public ListView<String>  setChambPassList(ListView<String> listView){
         int i = 1;
+
         ArrayList<Chamber> chambers = levGen.getChambers();
         ArrayList<Passage> passages = levGen.getPassages();
+
+        saveData = new Save(chambers);
+        loadData = new Load();
+
         for(Passage h: passages){
             listView.getItems().add("Passage " + i);
             i++;
