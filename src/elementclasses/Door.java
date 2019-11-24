@@ -10,7 +10,7 @@ import dnd.die.D6;
  * @author Matthew Krahn
  */
 
-public class Door {
+public class Door implements java.io.Serializable{
 /**
      * list to hold doors.
      */
@@ -185,15 +185,20 @@ private ArrayList<Door> doorList;
      */
 	public String getDescription() {
 		String combined = "";
-		if (isArchway()) {
-			combined = combined + ("There is an arch.");
-		}
-		if (isOpen()) {
-			combined = combined + ("The door is open. ");
-		}
-		if (isTrapped()) {
-			combined = combined + "The door is trapped by " + getTrapDescription() + ". ";
-		}
+		if(isArchway()||isOpen()||isTrapped()) {
+            if (isArchway()) {
+                combined = combined + ("There is an arch.");
+            }
+            if (isOpen()) {
+                combined = combined + ("The door is open. ");
+            }
+            if (isTrapped()) {
+                combined = combined + "The door is trapped by " + getTrapDescription() + ". ";
+            }
+        }
+		else {
+            combined = combined + ("The door is open. ");
+        }
 		return combined;
 	}
 

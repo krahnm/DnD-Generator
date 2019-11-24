@@ -1,6 +1,6 @@
 package elementclasses;
 
-public abstract class Space {
+public abstract class Space implements java.io.Serializable{
 /**
      * @return gets a description of the space
      */

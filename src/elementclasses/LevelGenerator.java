@@ -17,7 +17,7 @@ import java.util.HashMap;
 /*
  * java -cp lib/dnd-20190914.jar:.:build elementclasses/LevelGenerator
  */
-public class LevelGenerator {
+public class LevelGenerator implements java.io.Serializable{
 
     private HashMap<Door, ArrayList<Chamber>> hm;
     private HashMap<Door, ArrayList<Integer>> hmVal;

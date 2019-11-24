@@ -1,24 +1,22 @@
 package gui;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.geometry.Orientation;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Popup;
 import javafx.geometry.Insets;
+
+import javax.swing.*;
+import java.io.File;
+import java.util.Optional;
 
 
 public class MyGui extends Application {
@@ -80,23 +78,16 @@ public class MyGui extends Application {
             descriptionPane.show(primaryStage);
         });
 
-
-
         ListView<String> finalListView = listView;
         listView.setOnMouseClicked(event -> {
             ObservableList selectedIndices = finalListView.getSelectionModel().getSelectedIndices();
-int i = 0;
+
             for(Object o : selectedIndices){
                 desc = theController.getChambPassDesc(finalListView.getSelectionModel().getSelectedIndex());
-                //System.out.println(o + " t " + theController.getChambPassDesc(finalListView.getSelectionModel().getSelectedIndex()));
                 Node centre = setCentrePanel(desc);
                 root.setCenter(centre);
-                //Scene scene = new Scene(root, 1200, 800);
                 primaryStage.setTitle("DND Level Generator");
-                //primaryStage.setScene(scene);
                 primaryStage.show();
-
-                i++;
             }
         });
         listView.setMaxWidth(300);
@@ -135,23 +126,30 @@ int i = 0;
     }
 
     private Node setFileMenu() {
-
-        //TODO: Add clickabillity https://www.youtube.com/watch?v=AP4e6Lxncp4
-
         Menu fileMenu = new Menu("File");
 
         //items
         MenuItem saveFile = new MenuItem("Save File");
-        saveFile.setOnAction(e -> System.out.println("Save File"));
+        saveFile.setOnAction(e -> theController.save(getUserFile())        );
         fileMenu.getItems().add(saveFile);
+
         MenuItem loadFile = new MenuItem("Load File");
-        loadFile.setOnAction(e -> System.out.println("Load File"));
+        loadFile.setOnAction(e -> {
+            theController.load(getUserFile());
+            refreshLeft();
+        });
         fileMenu.getItems().add(loadFile);
         //menu bar
         MenuBar menuBar = new MenuBar();
         menuBar.getMenus().add(fileMenu);
 
         return menuBar;
+    }
+    public void refreshLeft(){
+        Node left = setListView();
+        root.setLeft(left);
+        primaryStage.show();
+
     }
 
     private Node setCentrePanel(String string) {
@@ -167,6 +165,21 @@ int i = 0;
         ComboBox<String> comboBox = new ComboBox<>();
         comboBox = theController.setDoorList(comboBox);
         comboBox.setPromptText("List of Doors");
+
+        ComboBox<String> finalComboBox = comboBox;
+        comboBox.setOnAction(event -> {
+
+            int selectedIndex = finalComboBox.getSelectionModel().getSelectedIndex();
+
+            //for(Object o : selectedIndices){
+                desc = theController.getDoorDesc(selectedIndex);
+                Node centre = setCentrePanel(desc);
+                root.setCenter(centre);
+                primaryStage.setTitle("DND Level Generator");
+                primaryStage.show();
+            //}
+        });
+
         VBox temp = new VBox(10);
         temp.setPadding(new Insets(20, 20, 20, 20));
         temp.getChildren().addAll(comboBox);
@@ -174,42 +187,6 @@ int i = 0;
         return temp;
     }
 
-    private Node setLeftButtonPanel() {
-        /*this method should be broken down into even smaller methods, maybe one per button*/
-        VBox temp = new VBox();
-        temp.setStyle("-fx-padding: 100;" +
-                "-fx-border-style: solid inside;" +
-                "-fx-border-width: 2;" +
-                "-fx-border-insets: 50;" +
-                "-fx-border-radius: 5;" +
-                "-fx-border-color: blue;");
-        /*This button listener is an example of a button changing something
-        in the controller but nothing happening in the view */
-
-        Button firstButton = createButton("Hello world", "-fx-background-color: #ff0000; -fx-background-radius: 10, 10, 10, 10;");
-        firstButton.setOnAction((ActionEvent event) -> {
-            theController.reactToButton();
-        });
-        temp.getChildren().add(firstButton);
-
-        /*This button listener is only changing the view and doesn't need
-        to contact the controller
-         */
-        Button showButton = createButton("Show Description", "-fx-background-color: #FFFFFF; ");
-        showButton.setOnAction((ActionEvent event) -> {
-            descriptionPane.show(primaryStage);
-        });
-        temp.getChildren().add(showButton);
-        /*this button listener is an example of getting data from the controller */
-        Button hideButton = createButton("Hide Description", "-fx-background-color: #FFFFFF; ");
-        hideButton.setOnAction((ActionEvent event) -> {
-            descriptionPane.hide();
-            /*changeDescriptionText(theController.getNewDescription());*/
-        });
-        temp.getChildren().add(hideButton);
-        return temp;
-
-    }
 
     /* an example of a popup area that can be set to nearly any
     type of node
@@ -234,6 +211,32 @@ int i = 0;
         btn.setText(text);
         btn.setStyle("");
         return btn;
+    }
+
+    private String getUserFile(){
+        /*TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Create File");
+        dialog.setHeaderText("Enter your name:");
+        dialog.setContentText("Full Path Name and File:");
+
+        Optional<String> result = dialog.showAndWait();
+        String entered = "";
+
+        if(result.isPresent()){
+            entered = result.get();
+        }
+        return entered;*/
+        JButton btn = new JButton();
+        JFileChooser fc = new JFileChooser();
+       // File file = fc.showSaveDialog(btn);
+        fc.setCurrentDirectory(new java.io.File("."));
+        fc.setDialogTitle("File Chooser");
+        fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        if( fc.showSaveDialog(btn) == JFileChooser.APPROVE_OPTION){
+            System.out.println(fc.getSelectedFile().getAbsolutePath());
+
+        }
+        return fc.getSelectedFile().getAbsolutePath();
     }
 
     private void changeDescriptionText(String text) {

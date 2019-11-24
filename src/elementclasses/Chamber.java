@@ -17,7 +17,7 @@ import java.util.ArrayList;
  * @author Matthew Krahn
  */
 
-public class Chamber extends Space {
+public class Chamber extends Space implements java.io.Serializable {
 
 /**
      * holds contents.

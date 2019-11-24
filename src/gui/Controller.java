@@ -1,5 +1,6 @@
 package gui;
 
+import java.io.*;
 import java.util.ArrayList;
 
 import elementclasses.Chamber;
@@ -8,14 +9,11 @@ import elementclasses.LevelGenerator;
 import elementclasses.Passage;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
-import saves.Save;
-import saves.Load;
+
 
 public class Controller {
     private MyGui gui;
     private LevelGenerator levGen;
-    private Save saveData;
-    private Load loadData;
 
     public Controller(MyGui tempGui){
         gui = tempGui;
@@ -46,9 +44,6 @@ public class Controller {
 
         ArrayList<Chamber> chambers = levGen.getChambers();
         ArrayList<Passage> passages = levGen.getPassages();
-
-        saveData = new Save(chambers);
-        loadData = new Load();
 
         for(Passage h: passages){
             listView.getItems().add("Passage " + i);
@@ -89,6 +84,17 @@ public class Controller {
         return comboBox;
     }
 
+    public String  getDoorDesc(int index){
+        ArrayList<Door> doors = levGen.getDoors();
+
+        System.out.println("doors size " + doors.size());
+        System.out.println("index size " + index);
+
+            return doors.get(index).getDescription();
+
+
+    }
+
     public ComboBox<String> setTreasureList( ComboBox<String> comboBox){
         //ArrayList<Door> doors = levGen.getDoors();
         //int i = 1;
@@ -107,6 +113,41 @@ public class Controller {
         //    i++;
         //}
         return comboBox;
+    }
+
+    public void save(String file) {
+        try {
+            FileOutputStream fileOut = new FileOutputStream(file);
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(levGen);
+            out.close();
+            fileOut.close();
+            System.out.printf("Serialized data is saved in " + file);
+        } catch (IOException i) {
+            i.printStackTrace();
+        }
+    }
+
+    public void load(String file) {
+         levGen = null;
+        System.out.println("LOAD:  " + file);
+        try {
+            FileInputStream fileIn = new FileInputStream(file);
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            levGen = (LevelGenerator) in.readObject();
+            in.close();
+            fileIn.close();
+        } catch (IOException i) {
+            i.printStackTrace();
+            return;
+        } catch (ClassNotFoundException c) {
+            System.out.println("Load file not found");
+            c.printStackTrace();
+            return;
+        }
+
+        System.out.println("Deserialized LevelGenerator...");
+
     }
 
    /* public String getNewDescription(){

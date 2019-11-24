@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 /* Represents a 10 ft section of passageway */
 
-public class PassageSection {
+public class PassageSection implements java.io.Serializable{
 
 /**
      * list to hold doors.

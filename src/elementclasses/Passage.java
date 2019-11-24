@@ -9,7 +9,7 @@ import dnd.die.D20;
  * @author Matthew Krahn
  */
 
-public class Passage extends Space {
+public class Passage extends Space implements java.io.Serializable{
 
 /**
      * list to hold passage sections.
