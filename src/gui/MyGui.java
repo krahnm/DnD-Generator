@@ -1,4 +1,4 @@
-package sample;
+package gui;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -21,10 +21,10 @@ import javafx.stage.Popup;
 import javafx.geometry.Insets;
 
 
-public class Main extends Application {
+public class MyGui extends Application {
 
 
-
+    private String desc;
     private Controller theController;
     private BorderPane root;  //the root element of this GUI
     private Popup descriptionPane;
@@ -34,42 +34,104 @@ public class Main extends Application {
     @Override
     public void start(Stage assignedStage) {
         /*Initializing instance variables */
-        /*theController = new Controller(this);*/
+        theController = new Controller(this);
         primaryStage = assignedStage;
         /*Border Panes have  top, left, right, center and bottom sections */
        root = setUpRoot();
-       descriptionPane = createPopUp(200, 300, "Example Description of something");
+
 
 
         Scene scene = new Scene(root, 1200, 800);
-        primaryStage.setTitle("Hello GUI Demo");
+        primaryStage.setTitle("DND Level Generator");
         primaryStage.setScene(scene);
         primaryStage.show();
 
     }
 
     private BorderPane setUpRoot() {
-        BorderPane temp = new BorderPane();
-        temp.setTop(new Label("The name or identifier of the thing below"));
+        BorderPane root = new BorderPane();
+        root.setTop(new Label("The name or identifier of the thing below"));
         Node left = setListView();  //separate method for the left section
         Node right = setRightButtonPanel();
         Node top = setFileMenu();
-        temp.setLeft(left);
-        temp.setRight(right);
-        temp.setTop(top);
-        //TilePane room = createTilePanel();
-        GridPane room = null;/*new ChamberView(4,4);*/
-        temp.setCenter(room);
-        return temp;
+        Node centre = setCentrePanel(desc);
+        root.setLeft(left);
+        root.setRight(right);
+        root.setTop(top);
+        root.setCenter(centre);
+
+        return root;
     }
 
     private Node setListView() {
         ListView<String> listView = new ListView<>();
-        listView.getItems().addAll("NUMMA 1", "NUMMA 2", "NUMMA 3", "NUMMA 4", "NUMMA 5");
+        listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        listView = theController.setChambPassList(listView);
+       // System.out.println(listView.getSelectionModel().getSelectedItem());
+        //listView.onMouseClickedProperty();
+        Button btn = createButton("Edit", "-fx-background-color: #ff0000; -fx-background-radius: 10, 10, 10, 10;");
+        btn.setOnAction((ActionEvent event) -> {
+            theController.reactToButton();
+
+            Node left = treasureSelect();
+            Node right = monsterSelect();
+            descriptionPane = createPopUp(200, 300, desc);
+            descriptionPane.getContent().addAll(right, left);
+            descriptionPane.show(primaryStage);
+        });
+
+
+
+        ListView<String> finalListView = listView;
+        listView.setOnMouseClicked(event -> {
+            ObservableList selectedIndices = finalListView.getSelectionModel().getSelectedIndices();
+int i = 0;
+            for(Object o : selectedIndices){
+                desc = theController.getChambPassDesc(finalListView.getSelectionModel().getSelectedIndex());
+                //System.out.println(o + " t " + theController.getChambPassDesc(finalListView.getSelectionModel().getSelectedIndex()));
+                Node centre = setCentrePanel(desc);
+                root.setCenter(centre);
+                //Scene scene = new Scene(root, 1200, 800);
+                primaryStage.setTitle("DND Level Generator");
+                //primaryStage.setScene(scene);
+                primaryStage.show();
+
+                i++;
+            }
+        });
         listView.setMaxWidth(300);
         listView.setMaxHeight(200);
 
-        return listView;
+        VBox temp = new VBox(10);
+        temp.setPadding(new Insets(20, 30, 20, 20));
+        temp.getChildren().addAll(listView, btn);
+
+
+        return temp;
+    }
+
+    private Node monsterSelect() {
+        ComboBox<String> comboBox = new ComboBox<>();
+        comboBox = theController.setMonsterList(comboBox);
+        comboBox.setPromptText("Add Monster");
+        VBox temp = new VBox(10);
+        temp.setPadding(new Insets(20, 20, 20, 20));
+        temp.setLayoutX(250);
+        temp.setLayoutY(0);
+        temp.getChildren().addAll(comboBox);
+
+        return temp;
+    }
+
+    private Node treasureSelect() {
+        ComboBox<String> comboBox = new ComboBox<>();
+        comboBox = theController.setTreasureList(comboBox);
+        comboBox.setPromptText("Add Treasure");
+        VBox temp = new VBox(10);
+        temp.setPadding(new Insets(20, 20, 20, 20));
+        temp.getChildren().addAll(comboBox);
+
+        return temp;
     }
 
     private Node setFileMenu() {
@@ -79,9 +141,12 @@ public class Main extends Application {
         Menu fileMenu = new Menu("File");
 
         //items
-        fileMenu.getItems().add(new MenuItem("Save File"));
-        fileMenu.getItems().add(new MenuItem("Load File"));
-
+        MenuItem saveFile = new MenuItem("Save File");
+        saveFile.setOnAction(e -> System.out.println("Save File"));
+        fileMenu.getItems().add(saveFile);
+        MenuItem loadFile = new MenuItem("Load File");
+        loadFile.setOnAction(e -> System.out.println("Load File"));
+        fileMenu.getItems().add(loadFile);
         //menu bar
         MenuBar menuBar = new MenuBar();
         menuBar.getMenus().add(fileMenu);
@@ -89,9 +154,18 @@ public class Main extends Application {
         return menuBar;
     }
 
+    private Node setCentrePanel(String string) {
+        TextArea textArea = new TextArea();
+        textArea.setText(string);
+        VBox temp = new VBox(10);
+        temp.setPadding(new Insets(20, 30, 20, 20));
+        temp.getChildren().addAll(textArea);
+        return temp;
+    }
+
     private Node setRightButtonPanel() {
         ComboBox<String> comboBox = new ComboBox<>();
-        comboBox.getItems().addAll("WHAAAA", "BAYou", "Best Buy", "Popeyes");
+        comboBox = theController.setDoorList(comboBox);
         comboBox.setPromptText("List of Doors");
         VBox temp = new VBox(10);
         temp.setPadding(new Insets(20, 20, 20, 20));
@@ -114,7 +188,7 @@ public class Main extends Application {
 
         Button firstButton = createButton("Hello world", "-fx-background-color: #ff0000; -fx-background-radius: 10, 10, 10, 10;");
         firstButton.setOnAction((ActionEvent event) -> {
-            /*theController.reactToButton();*/
+            theController.reactToButton();
         });
         temp.getChildren().add(firstButton);
 
