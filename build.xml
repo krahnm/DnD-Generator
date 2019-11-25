@@ -12,12 +12,13 @@
  <property name="res" location="res"/>
   <property name="test" location="test"/>
   <property name="javafxlib" location="javafxlib"/>
+<property name="env.JAVAFX_HOME" location="javafxlib"/>
 
   <property name="libfile" value="dnd-A4.jar"/>
   <property name="libfile1" value="hamcrest-core-1.3.jar"/>
   <property name="libfile2" value="junit-4.12.jar"/>
   <property name="jar_file" value="gui.jar"/>
-  <property name="main_class" value="gui.Launcher"/>
+  <property name="main_class" value="gui/Launcher"/>
   <property name="res_folder" value="res"/>
 
   <property environment="env"/>
@@ -139,7 +140,19 @@
     <echo message="OS Name is:         ${os.name}" />
   </target>
  
-
+<!-- CheckStyle Configuration and task. Does not run automatically -->
+<taskdef resource="com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties"
+         classpath="lib/checkstyle-8.24-all.jar"/>
+<target name="checkstyle"
+        description="Generates a report of code convention violations.">
+        
+<checkstyle config="lib/sun_checks.xml"
+              failureProperty="checkstyle.failure"
+              failOnViolation="false">
+    <fileset dir="src" includes="**/*.java"/>
+  </checkstyle>
+  
+  </target>
   
 
 

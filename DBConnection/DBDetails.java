@@ -3,12 +3,12 @@ public class DBDetails
 
 /*Change the username to be your own login name */
 
-    public static final String username = "";
+    public static final String username = "krahnm";
 
 /* Change the password to be your student number.  
 DO NOT USE YOUR NORMAL PASSWORD*/
 
-    public  static final  String password = "";
+    public  static final  String password = "1053674";
 
 
 	

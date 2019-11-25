@@ -12,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.*;
 import javafx.stage.Popup;
+import javafx.stage.FileChooser;
 import javafx.geometry.Insets;
 
 import javax.swing.*;
@@ -135,7 +136,7 @@ public class MyGui extends Application {
 
         MenuItem loadFile = new MenuItem("Load File");
         loadFile.setOnAction(e -> {
-            theController.load(getUserFile());
+            theController.load(lodFile());
             refreshLeft();
         });
         fileMenu.getItems().add(loadFile);
@@ -214,29 +215,22 @@ public class MyGui extends Application {
     }
 
     private String getUserFile(){
-        /*TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Create File");
-        dialog.setHeaderText("Enter your name:");
-        dialog.setContentText("Full Path Name and File:");
 
-        Optional<String> result = dialog.showAndWait();
-        String entered = "";
+        FileChooser fc = new FileChooser();
+        File file = fc.showSaveDialog(primaryStage);
 
-        if(result.isPresent()){
-            entered = result.get();
-        }
-        return entered;*/
-        JButton btn = new JButton();
-        JFileChooser fc = new JFileChooser();
-       // File file = fc.showSaveDialog(btn);
-        fc.setCurrentDirectory(new java.io.File("."));
-        fc.setDialogTitle("File Chooser");
-        fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-        if( fc.showSaveDialog(btn) == JFileChooser.APPROVE_OPTION){
-            System.out.println(fc.getSelectedFile().getAbsolutePath());
 
-        }
-        return fc.getSelectedFile().getAbsolutePath();
+        return file.getAbsolutePath();
+    }
+
+
+    private String lodFile(){
+
+        FileChooser fc = new FileChooser();
+        File file = fc.showOpenDialog(primaryStage);
+
+
+        return file.getAbsolutePath();
     }
 
     private void changeDescriptionText(String text) {
