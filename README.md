@@ -3,5 +3,4 @@ Matthew Krahn
 krahnm@uoguelph.ca
 
 Please look at:
-	Database for Monster lists
-	Editing for Monster DataBase
+	[Database for Monster lists] and [Editing for Monster DataBase]
