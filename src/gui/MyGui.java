@@ -42,7 +42,7 @@ public class MyGui extends Application {
         /*Border Panes have  top, left, right, center and bottom sections */
        root = setUpRoot();
 
-		theController.fillMonstDatabase();
+		//theController.fillMonstDatabase();
 
         Scene scene = new Scene(root, 1200, 800);
         primaryStage.setTitle("DND Level Generator");
