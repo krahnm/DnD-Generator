@@ -7,6 +7,10 @@ import elementclasses.Chamber;
 import elementclasses.Door;
 import elementclasses.LevelGenerator;
 import elementclasses.Passage;
+import dbconnection.ConnectionDemo;
+import dbconnection.DBConnection;
+import dbconnection.DBDetails;
+import dbconnection.DBMonster;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 
@@ -14,11 +18,17 @@ import javafx.scene.control.ListView;
 public class Controller {
     private MyGui gui;
     private LevelGenerator levGen;
+    private DBConnection con;
+    private DBDetails details;
+    private DBMonster monst;
+    private ConnectionDemo conDem;
 
     public Controller(MyGui tempGui){
         gui = tempGui;
         this.levGen = new LevelGenerator();
         this.levGen.levelGen(5);
+        this.details = new DBDetails();
+        this.conDem = new ConnectionDemo();
     }
 
    /* private String getNameList(){
@@ -38,6 +48,9 @@ public class Controller {
         //return "this would normally be a description pulled from the model of the Dungeon level.";
         return getNameList();
     }*/
+    
+   
+    
 
     public ListView<String>  setChambPassList(ListView<String> listView){
         int i = 1;
@@ -57,6 +70,8 @@ public class Controller {
         }
         return listView;
     }
+    
+    
 
     public String  getChambPassDesc(int index){
         ArrayList<Chamber> chambers = levGen.getChambers();
@@ -106,14 +121,28 @@ public class Controller {
     }
 
     public ComboBox<String> setMonsterList( ComboBox<String> comboBox){
-        //ArrayList<Door> doors = levGen.getDoors();
-        //int i = 1;
-        // for(Door h: doors){
-        comboBox.getItems().addAll("BOOGEY MAN", "DRACULA", "ZOMBIE");
-        //    i++;
-        //}
+        ArrayList<String> monsters = conDem.getMonsters();
+        
+        
+        for (String result : monsters){
+			System.out.println(result);
+			comboBox.getItems().add(result);
+		}
+        
         return comboBox;
     }
+    
+    public void clearMonstDatabase(){
+		conDem.emptyDatabase();
+	}
+	
+	public void fillMonstDatabase(){
+		conDem.testConnection();
+	}
+	
+	public void addMonster(String name, String lo, String hi, String desc){
+		conDem.addMonster(name, lo, hi, desc);
+	}
 
     public void save(String file) {
         try {
